@@ -10,7 +10,12 @@ class Plugin {
 	}
 
 	public static function Load(GenericEvent $event) {
-	
+		$service = $event->getSubject();
+		$addon = new Addon();
+		$addon->set_module('vps')->set_text('Additional IP')->set_text_match('Additional IP (.*)')
+			->set_cost(VPS_IP_COST)->set_require_ip(true)->set_enable(function() {
+			})->set_disable(function() {
+			})->register();
 	}
 
 }
