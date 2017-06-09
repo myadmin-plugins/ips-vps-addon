@@ -20,4 +20,10 @@ class Plugin {
 		$service->add_addon($addon);
 	}
 
+	public static function Settings(GenericEvent $event) {
+		$module = 'vps';
+		$settings = $event->getSubject();
+		$settings->add_text_setting($module, 'Addon Costs', 'vps_ip_cost', 'VPS Additional IP Cost:', 'This is the cost for purchasing an additional IP on top of a VPS.', $settings->get_setting('VPS_IP_COST'));
+		$settings->add_text_setting($module, 'Slice Amounts', 'vps_max_ips', 'Max Addon IP Addresses:', 'Maximum amount of additional IPs you can add to your VPS', $settings->get_setting('VPS_MAX_IPS'));
+	}
 }
