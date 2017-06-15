@@ -13,14 +13,25 @@ class Plugin {
 		$service = $event->getSubject();
 		function_requirements('class.Addon');
 		$addon = new \Addon();
-		$addon->set_module('vps')->set_text('Additional IP')->set_text_match('Additional IP (.*)')
-			->set_cost(VPS_IP_COST)->set_require_ip(true)->set_enable(function() {
-				$service_info = $service_order->get_service_info();
-				$settings = get_module_settings($service_order->get_module());
-				require_once 'include/licenses/license.functions.inc.php';
-			})->set_disable(function() {
-			})->register();
-		$service->add_addon($addon);
+		$addon->set_module('vps')
+			->set_text('Additional IP')
+			->set_text_match('Additional IP (.*)')
+			->set_cost(VPS_IP_COST)
+			->set_require_ip(true)
+			->set_enable(['Detain\MyAdminVpsIps\Plugins', 'Enable'])
+			->set_disable(['Detain\MyAdminVpsIps\Plugins', 'Disable'])
+			->register();
+		$service_order->add_addon($addon);
+	}
+
+	public static function Enable($service_order) {
+		$service_info = $service_order->get_service_info();
+		$settings = get_module_settings($service_order->get_module());
+	}
+
+	public static function Disable($service_order) {
+		$service_info = $service_order->get_service_info();
+		$settings = get_module_settings($service_order->get_module());
 	}
 
 	public static function Settings(GenericEvent $event) {
