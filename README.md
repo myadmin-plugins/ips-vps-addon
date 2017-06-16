@@ -1,15 +1,28 @@
-# MyAdmin Ips Licensing Plugin
+# Ips Addon for VPS Module in MyAdmin
 
-This plugin adds support for selling Ips licenses to the MyAdmin system
+Ips Addon for VPS Module in MyAdmin
 
-[![Latest Stable Version](https://poser.pugx.org/detain/myadmin-ips-licensing/version)](https://packagist.org/packages/detain/myadmin-ips-licensing)
-[![Total Downloads](https://poser.pugx.org/detain/myadmin-ips-licensing/downloads)](https://packagist.org/packages/detain/myadmin-ips-licensing)
-[![Latest Unstable Version](https://poser.pugx.org/detain/myadmin-ips-licensing/v/unstable)](//packagist.org/packages/detain/myadmin-ips-licensing)
-[![License](https://poser.pugx.org/detain/myadmin-ips-licensing/license)](https://packagist.org/packages/detain/myadmin-ips-licensing)
-[![Monthly Downloads](https://poser.pugx.org/detain/myadmin-ips-licensing/d/monthly)](https://packagist.org/packages/detain/myadmin-ips-licensing)
-[![Daily Downloads](https://poser.pugx.org/detain/myadmin-ips-licensing/d/daily)](https://packagist.org/packages/detain/myadmin-ips-licensing)
-[![Reference Status](https://www.versioneye.com/php/detain:myadmin-ips-licensing/reference_badge.svg?style=flat)](https://www.versioneye.com/php/detain:myadmin-ips-licensing/references)
-[![Build Status](https://travis-ci.org/detain/myadmin-ips-licensing.svg?branch=master)](https://travis-ci.org/detain/myadmin-ips-licensing)
-[![Code Climate](https://codeclimate.com/github/detain/myadmin-ips-licensing/badges/gpa.svg)](https://codeclimate.com/github/detain/myadmin-ips-licensing)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/detain/myadmin-ips-licensing/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/detain/myadmin-ips-licensing/?branch=master)
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/dcfdb555bf234afabceb40728959280b)](https://www.codacy.com/app/detain/myadmin-ips-licensing)
+## Build Status and Code Analysis
+
+Site          | Status
+--------------|---------------------------
+Travis-CI     | [![Build Status](https://travis-ci.org/detain/myadmin-ips-vps-addon.svg?branch=master)](https://travis-ci.org/detain/myadmin-ips-vps-addon)
+Code Climate  | [![Code Climate](https://codeclimate.com/github/detain/myadmin-ips-vps-addon/badges/gpa.svg)](https://codeclimate.com/github/detain/myadmin-ips-vps-addon) [![Test Coverage](https://codeclimate.com/github/detain/myadmin-ips-vps-addon/badges/coverage.svg)](https://codeclimate.com/github/detain/myadmin-ips-vps-addon/coverage) [![Issue Count](https://codeclimate.com/github/detain/myadmin-ips-vps-addon/badges/issue_count.svg)](https://codeclimate.com/github/detain/myadmin-ips-vps-addon)
+Scrutinizer   | [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/detain/myadmin-ips-vps-addon/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/detain/myadmin-ips-vps-addon/?branch=master) [![Code Coverage](https://scrutinizer-ci.com/g/detain/myadmin-ips-vps-addon/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/detain/myadmin-ips-vps-addon/?branch=master) [![Build Status](https://scrutinizer-ci.com/g/detain/myadmin-ips-vps-addon/badges/build.png?b=master)](https://scrutinizer-ci.com/g/detain/myadmin-ips-vps-addon/build-status/master)
+Codacy        | [![Codacy Badge](https://api.codacy.com/project/badge/Grade/226251fc068f4fd5b4b4ef9a40011d06)](https://www.codacy.com/app/detain/myadmin-ips-vps-addon) [![Codacy Badge](https://api.codacy.com/project/badge/Coverage/25fa74eb74c947bf969602fcfe87e349)](https://www.codacy.com/app/detain/myadmin-ips-vps-addon?utm_source=github.com&utm_medium=referral&utm_content=detain/myadmin-ips-vps-addon&utm_campaign=Badge_Coverage)
+VersionEye    | [![Reference Status](https://www.versioneye.com/php/detain:myadmin-ips-vps-addon/reference_badge.svg?style=flat)](https://www.versioneye.com/php/detain:myadmin-ips-vps-addon/references) [![Dependency Status](https://www.versioneye.com/user/projects/592f7318bafc5500414dfd2a/badge.svg?style=flat-square)](https://www.versioneye.com/user/projects/592f7318bafc5500414dfd2a)
+Packagist     | [![Latest Stable Version](https://poser.pugx.org/detain/myadmin-ips-vps-addon/version)](https://packagist.org/packages/detain/myadmin-ips-vps-addon) [![Total Downloads](https://poser.pugx.org/detain/myadmin-ips-vps-addon/downloads)](https://packagist.org/packages/detain/myadmin-ips-vps-addon) [![Latest Unstable Version](https://poser.pugx.org/detain/myadmin-ips-vps-addon/v/unstable)](//packagist.org/packages/detain/myadmin-ips-vps-addon) [![Monthly Downloads](https://poser.pugx.org/detain/myadmin-ips-vps-addon/d/monthly)](https://packagist.org/packages/detain/myadmin-ips-vps-addon) [![Daily Downloads](https://poser.pugx.org/detain/myadmin-ips-vps-addon/d/daily)](https://packagist.org/packages/detain/myadmin-ips-vps-addon) [![License](https://poser.pugx.org/detain/myadmin-ips-vps-addon/license)](https://packagist.org/packages/detain/myadmin-ips-vps-addon)
+
+
+## Installation
+
+Install with composer like
+
+```sh
+composer require detain/myadmin-ips-vps-addon
+```
+
+## License
+
+The Ips Addon for VPS Module in MyAdmin class is licensed under the LGPL-v2 license.
+
