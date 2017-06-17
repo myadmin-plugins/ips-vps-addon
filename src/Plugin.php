@@ -31,7 +31,7 @@ class Plugin {
 			->set_text('Additional IP')
 			->set_text_match('Additional IP (.*)')
 			->set_cost(VPS_IP_COST)
-			->set_require_ip(true)
+			->set_require_ip(TRUE)
 			->set_enable([__CLASS__, 'Enable'])
 			->set_disable([__CLASS__, 'Disable'])
 			->register();
