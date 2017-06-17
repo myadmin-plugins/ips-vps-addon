@@ -39,12 +39,12 @@ class Plugin {
 	}
 
 	public static function Enable($service_order) {
-		$service_info = $service_order->get_service_info();
+		$serviceInfo = $service_order->getServiceInfo();
 		$settings = get_module_settings($service_order->get_module());
 	}
 
 	public static function Disable($service_order) {
-		$service_info = $service_order->get_service_info();
+		$serviceInfo = $service_order->getServiceInfo();
 		$settings = get_module_settings($service_order->get_module());
 	}
 
