@@ -19,7 +19,7 @@ class Plugin {
 	public static function getHooks() {
 		return [
 			'vps.load_addons' => [__CLASS__, 'Load'],
-			'vps.settings' => [__CLASS__, 'Settings'],
+			'vps.settings' => [__CLASS__, 'getSettings'],
 		];
 	}
 
@@ -48,7 +48,7 @@ class Plugin {
 		$settings = get_module_settings($service_order->get_module());
 	}
 
-	public static function Settings(GenericEvent $event) {
+	public static function getSettings(GenericEvent $event) {
 		$module = 'vps';
 		$settings = $event->getSubject();
 		$settings->add_text_setting($module, 'Addon Costs', 'vps_ip_cost', 'VPS Additional IP Cost:', 'This is the cost for purchasing an additional IP on top of a VPS.', $settings->get_setting('VPS_IP_COST'));
