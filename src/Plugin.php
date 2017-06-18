@@ -38,12 +38,12 @@ class Plugin {
 		$service->add_addon($addon);
 	}
 
-	public static function Enable($service_order) {
+	public static function Enable(\Service_Order $service_order) {
 		$serviceInfo = $service_order->getServiceInfo();
 		$settings = get_module_settings($service_order->get_module());
 	}
 
-	public static function Disable($service_order) {
+	public static function Disable(\Service_Order $service_order) {
 		$serviceInfo = $service_order->getServiceInfo();
 		$settings = get_module_settings($service_order->get_module());
 	}
