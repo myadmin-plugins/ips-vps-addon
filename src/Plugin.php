@@ -38,9 +38,35 @@ class Plugin {
 		$service->add_addon($addon);
 	}
 
-	public static function doEnable(\Service_Order $serviceOrder) {
+	public static function doEnable(\Service_Order $serviceOrder, $repeat_invoice_id, $regex_match = false) {
 		$serviceInfo = $serviceOrder->getServiceInfo();
 		$settings = get_module_settings($serviceOrder->getModule());
+		if ($regex_match === false) {
+			$db = get_module_db(self::$module);
+			$ip = vps_get_next_ip($serviceInfo[$settings['PREFIX'].'_server']);
+			myadmin_log(self::$module, 'info', 'Trying To Give '.$settings['TTILE'].' '.$serviceInfo[$settings['PREFIX'] . '_id'].' Repeat Invoice '.$repeat_invoice_id.' IP ' . ($ip === false ? '<ip allocation failed>' : $ip), __LINE__, __FILE__);
+			if ($ip) {
+				$GLOBALS['tf']->history->add(self::$module . 'queue', $serviceInfo[$settings['PREFIX'] . '_id'], 'add_ip', $ip, $serviceInfo[$settings['PREFIX'] . '_custid']);
+				$description = 'Additional IP ' . $ip . ' for ' . $settings['TBLNAME'] . ' ' . $serviceInfo[$settings['PREFIX'] . '_id'];
+				$rdescription = '(Repeat Invoice: ' . $repeat_invoice_id . ') ' . $description;
+				$db->query("update {$settings['PREFIX']}_ips set ips_main=0,ips_used=1,ips_{$settings['PREFIX']}={$serviceInfo[$settings['PREFIX'].'_id']} where ips_ip='{$ip}'", __LINE__, __FILE__);
+				$db->query("update invoices set invoices_description='{$rdescription}' where invoices_type=1 and invoices_extra='{$repeat_invoice_id}'", __LINE__, __FILE__);
+				$db->query("update repeat_invoices set repeat_invoices_description='{$description}' where repeat_invoices_id='{$repeat_invoice_id}'", __LINE__, __FILE__);
+			} else {
+				$db->query('SELECT * FROM ' . $settings['PREFIX'] . '_masters WHERE ' . $settings['PREFIX'] . '_id=' . $serviceInfo[$settings['PREFIX'] . '_server'], __LINE__, __FILE__);
+				$db->next_record(MYSQL_ASSOC);
+				$headers = '';
+				$headers .= 'MIME-Version: 1.0' . EMAIL_NEWLINE;
+				$headers .= 'Content-type: text/html; charset=UTF-8' . EMAIL_NEWLINE;
+				$headers .= 'From: ' . TITLE . ' <' . EMAIL_FROM . '>' . EMAIL_NEWLINE;
+				$subject = '0 Free IPs On ' . $settings['TBLNAME'] . ' Server ' . $db->Record[$settings['PREFIX'] . '_name'];
+				admin_mail($subject, $settings['TBLNAME'] . " {$serviceInfo[$settings['PREFIX'].'_id']} Has Pending IPS<br>\n" . $subject, $headers, false, 'admin_email_vps_no_ips.tpl');
+			}
+		} else {
+			$ip = $regex_match;
+			$GLOBALS['tf']->history->add(self::$module . 'queue', $serviceInfo[$settings['PREFIX'] . '_id'], 'ensure_addon_ip', $ip, $serviceInfo[$settings['PREFIX'] . '_custid']);
+			$db->query("update {$settings['PREFIX']}_ips set ips_main=0,ips_used=1,ips_{$settings['PREFIX']}={$id} where ips_ip='{$ip}'", __LINE__, __FILE__);
+		}
 	}
 
 	public static function doDisable(\Service_Order $serviceOrder) {
@@ -49,9 +75,8 @@ class Plugin {
 	}
 
 	public static function getSettings(GenericEvent $event) {
-		$module = 'vps';
 		$settings = $event->getSubject();
-		$settings->add_text_setting($module, 'Addon Costs', 'vps_ip_cost', 'VPS Additional IP Cost:', 'This is the cost for purchasing an additional IP on top of a VPS.', $settings->get_setting('VPS_IP_COST'));
-		$settings->add_text_setting($module, 'Slice Amounts', 'vps_max_ips', 'Max Addon IP Addresses:', 'Maximum amount of additional IPs you can add to your VPS', $settings->get_setting('VPS_MAX_IPS'));
+		$settings->add_text_setting(self::$module, 'Addon Costs', 'vps_ip_cost', 'VPS Additional IP Cost:', 'This is the cost for purchasing an additional IP on top of a VPS.', $settings->get_setting('VPS_IP_COST'));
+		$settings->add_text_setting(self::$module, 'Slice Amounts', 'vps_max_ips', 'Max Addon IP Addresses:', 'Maximum amount of additional IPs you can add to your VPS', $settings->get_setting('VPS_MAX_IPS'));
 	}
 }
