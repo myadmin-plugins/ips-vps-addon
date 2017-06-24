@@ -38,13 +38,13 @@ class Plugin {
 		$service->addAddon($addon);
 	}
 
-	public static function doEnable(\Service_Order $serviceOrder, $repeatInvoiceId, $regexMatch = false) {
+	public static function doEnable(\Service_Order $serviceOrder, $repeatInvoiceId, $regexMatch = FALSE) {
 		$serviceInfo = $serviceOrder->getServiceInfo();
 		$settings = get_module_settings(self::$module);
 		$db = get_module_db(self::$module);
-		if ($regexMatch === false) {
+		if ($regexMatch === FALSE) {
 			$ip = vps_get_next_ip($serviceInfo[$settings['PREFIX'].'_server']);
-			myadmin_log(self::$module, 'info', 'Trying To Give '.$settings['TITLE'].' '.$serviceInfo[$settings['PREFIX'].'_id'].' Repeat Invoice '.$repeatInvoiceId.' IP ' . ($ip === false ? '<ip allocation failed>' : $ip), __LINE__, __FILE__);
+			myadmin_log(self::$module, 'info', 'Trying To Give '.$settings['TITLE'].' '.$serviceInfo[$settings['PREFIX'].'_id'].' Repeat Invoice '.$repeatInvoiceId.' IP ' . ($ip === FALSE ? '<ip allocation failed>' : $ip), __LINE__, __FILE__);
 			if ($ip) {
 				$GLOBALS['tf']->history->add(self::$module . 'queue', $serviceInfo[$settings['PREFIX'].'_id'], 'add_ip', $ip, $serviceInfo[$settings['PREFIX'].'_custid']);
 				$description = 'Additional IP ' . $ip . ' for ' . $settings['TBLNAME'] . ' ' . $serviceInfo[$settings['PREFIX'].'_id'];
@@ -60,7 +60,7 @@ class Plugin {
 				$headers .= 'Content-type: text/html; charset=UTF-8' . EMAIL_NEWLINE;
 				$headers .= 'From: ' . TITLE . ' <' . EMAIL_FROM . '>' . EMAIL_NEWLINE;
 				$subject = '0 Free IPs On ' . $settings['TBLNAME'] . ' Server ' . $db->Record[$settings['PREFIX'].'_name'];
-				admin_mail($subject, $settings['TBLNAME'] . " {$serviceInfo[$settings['PREFIX'].'_id']} Has Pending IPS<br>\n" . $subject, $headers, false, 'admin_email_vps_no_ips.tpl');
+				admin_mail($subject, $settings['TBLNAME'] . " {$serviceInfo[$settings['PREFIX'].'_id']} Has Pending IPS<br>\n" . $subject, $headers, FALSE, 'admin_email_vps_no_ips.tpl');
 			}
 		} else {
 			$ip = $regexMatch;
