@@ -40,12 +40,12 @@ class Plugin {
 
 	public static function doEnable(\Service_Order $serviceOrder) {
 		$serviceInfo = $serviceOrder->getServiceInfo();
-		$settings = get_module_settings($serviceOrder->get_module());
+		$settings = get_module_settings($serviceOrder->getModule());
 	}
 
 	public static function doDisable(\Service_Order $serviceOrder) {
 		$serviceInfo = $serviceOrder->getServiceInfo();
-		$settings = get_module_settings($serviceOrder->get_module());
+		$settings = get_module_settings($serviceOrder->getModule());
 	}
 
 	public static function getSettings(GenericEvent $event) {
