@@ -41,8 +41,8 @@ class Plugin {
 	public static function doEnable(\Service_Order $serviceOrder, $repeatInvoiceId, $regexMatch = false) {
 		$serviceInfo = $serviceOrder->getServiceInfo();
 		$settings = get_module_settings(self::$module);
+		$db = get_module_db(self::$module);
 		if ($regexMatch === false) {
-			$db = get_module_db(self::$module);
 			$ip = vps_get_next_ip($serviceInfo[$settings['PREFIX'].'_server']);
 			myadmin_log(self::$module, 'info', 'Trying To Give '.$settings['TITLE'].' '.$serviceInfo[$settings['PREFIX'].'_id'].' Repeat Invoice '.$repeatInvoiceId.' IP ' . ($ip === false ? '<ip allocation failed>' : $ip), __LINE__, __FILE__);
 			if ($ip) {
