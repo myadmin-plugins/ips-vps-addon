@@ -76,7 +76,7 @@ class Plugin {
 		myadmin_log(self::$module, 'info', self::$name.' Deactivation', __LINE__, __FILE__);
 		if ($regexMatch !== FALSE) {
 			$ip = $regexMatch;
-			$GLOBALS['tf']->history->add(self::$module.'queue', $serviceInfo[$settings['PREFIX'].'_id'], 'remove_ip', $ip, $repeat_invoice->getCustid());
+			$GLOBALS['tf']->history->add(self::$module.'queue', $serviceInfo[$settings['PREFIX'].'_id'], 'remove_ip', $ip, $serviceInfo[$settings['PREFIX'].'_custid']);
 		} else {
 			$ip = 'None Assigned Yet';
 		}
