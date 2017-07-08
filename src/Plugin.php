@@ -6,9 +6,9 @@ use Symfony\Component\EventDispatcher\GenericEvent;
 
 class Plugin {
 
-	public static $name = 'Ips Licensing VPS Addon';
-	public static $description = 'Allows selling of Ips Server and VPS License Types.  More info at https://www.netenberg.com/ips.php';
-	public static $help = 'It provides more than one million end users the ability to quickly install dozens of the leading open source content management systems into their web space.  	Must have a pre-existing cPanel license with cPanelDirect to purchase a ips license. Allow 10 minutes for activation.';
+	public static $name = 'Additional IPs VPS Addon';
+	public static $description = 'Allows selling of additional IP Addresses as a VPS Addon.';
+	public static $help = '';
 	public static $module = 'vps';
 	public static $type = 'addon';
 
@@ -42,6 +42,7 @@ class Plugin {
 		$serviceInfo = $serviceOrder->getServiceInfo();
 		$settings = get_module_settings(self::$module);
 		$db = get_module_db(self::$module);
+		myadmin_log(self::$module, 'info', self::$name.' Activation', __LINE__, __FILE__);
 		if ($regexMatch === FALSE) {
 			$ip = vps_get_next_ip($serviceInfo[$settings['PREFIX'].'_server']);
 			myadmin_log(self::$module, 'info', 'Trying To Give '.$settings['TITLE'].' '.$serviceInfo[$settings['PREFIX'].'_id'].' Repeat Invoice '.$repeatInvoiceId.' IP '.($ip === FALSE ? '<ip allocation failed>' : $ip), __LINE__, __FILE__);
@@ -72,6 +73,7 @@ class Plugin {
 	public static function doDisable(\Service_Order $serviceOrder) {
 		$serviceInfo = $serviceOrder->getServiceInfo();
 		$settings = get_module_settings(self::$module);
+		myadmin_log(self::$module, 'info', self::$name.' Deactivation', __LINE__, __FILE__);
 	}
 
 	public static function getSettings(GenericEvent $event) {
