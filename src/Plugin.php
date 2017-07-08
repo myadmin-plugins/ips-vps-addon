@@ -82,8 +82,8 @@ class Plugin {
 		}
 		//$db->query("update {$settings['PREFIX']}_ips set ips_main=0,ips_used=0,ips_{$settings['PREFIX']}=0 where ips_ip='{$ip}'", __LINE__, __FILE__);
 		add_output('IP Removed And Canceled');
-		$email = $settings['TBLNAME'].' ID: '.$serviceInfo[$settings['PREFIX'].'_id'].'<br>'.$settings['TBLNAME'].' Hostname: '.$serviceInfo[$settings['PREFIX'].'_hostname'].'<br>'."Invoice: $repeatInvoiceId<br>" . "IP: $ip<br>" . "Description: {$repeat_invoice->getDescription()}<br>";
-		$subject = $settings['TBLNAME'].' '.$repeat_invoice->getService().' Canceled IP '.$ip;
+		$email = $settings['TBLNAME'].' ID: '.$serviceInfo[$settings['PREFIX'].'_id'].'<br>'.$settings['TBLNAME'].' Hostname: '.$serviceInfo[$settings['PREFIX'].'_hostname'].'<br>Repeat Invoice: '.$repeatInvoiceId.'<br>Description: '.self::$name.'<br>IP: '.$ip;
+		$subject = $settings['TBLNAME'].' '.$serviceInfo[$settings['PREFIX'].'_id'].' Canceled IP '.$ip;
 		$headers = '';
 		$headers .= 'MIME-Version: 1.0'.EMAIL_NEWLINE;
 		$headers .= 'Content-type: text/html; charset=UTF-8'.EMAIL_NEWLINE;
