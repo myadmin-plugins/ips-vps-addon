@@ -38,8 +38,8 @@ class Plugin {
 	 */
 	public static function getAddon(GenericEvent $event) {
 		$service = $event->getSubject();
-		function_requirements('class.Addon');
-		$addon = new \Addon();
+		function_requirements('class.AddonHandler');
+		$addon = new \AddonHandler();
 		$addon->setModule(self::$module)
 			->set_text('Additional IP')
 			->set_text_match('Additional IP (.*)')
@@ -52,11 +52,11 @@ class Plugin {
 	}
 
 	/**
-	 * @param \ServiceOrder $serviceOrder
+	 * @param \ServiceHandler $serviceOrder
 	 * @param                $repeatInvoiceId
 	 * @param bool           $regexMatch
 	 */
-	public static function doEnable(\ServiceOrder $serviceOrder, $repeatInvoiceId, $regexMatch = FALSE) {
+	public static function doEnable(\ServiceHandler $serviceOrder, $repeatInvoiceId, $regexMatch = FALSE) {
 		$serviceInfo = $serviceOrder->getServiceInfo();
 		$settings = get_module_settings(self::$module);
 		$db = get_module_db(self::$module);
@@ -89,11 +89,11 @@ class Plugin {
 	}
 
 	/**
-	 * @param \ServiceOrder $serviceOrder
+	 * @param \ServiceHandler $serviceOrder
 	 * @param                $repeatInvoiceId
 	 * @param bool           $regexMatch
 	 */
-	public static function doDisable(\ServiceOrder $serviceOrder, $repeatInvoiceId, $regexMatch = FALSE) {
+	public static function doDisable(\ServiceHandler $serviceOrder, $repeatInvoiceId, $regexMatch = FALSE) {
 		$serviceInfo = $serviceOrder->getServiceInfo();
 		$settings = get_module_settings(self::$module);
 		myadmin_log(self::$module, 'info', self::$name.' Deactivation', __LINE__, __FILE__);
