@@ -88,7 +88,7 @@ class Plugin {
 				$headers .= 'Content-type: text/html; charset=UTF-8'.EMAIL_NEWLINE;
 				$headers .= 'From: '.TITLE.' <'.EMAIL_FROM.'>'.EMAIL_NEWLINE;
 				$subject = '0 Free IPs On '.$settings['TBLNAME'].' Server '.$db->Record[$settings['PREFIX'].'_name'];
-				admin_mail($subject, $settings['TBLNAME'] . " {$serviceInfo[$settings['PREFIX'].'_id']} Has Pending IPS<br>\n" . $subject, $headers, FALSE, 'admin_email_vps_no_ips.tpl');
+				admin_mail($subject, $settings['TBLNAME'] . " {$serviceInfo[$settings['PREFIX'].'_id']} Has Pending IPS<br>\n" . $subject, $headers, FALSE, 'admin/vps_no_ips.tpl');
 			}
 		} else {
 			$ip = $regexMatch;
@@ -120,7 +120,7 @@ class Plugin {
 		$headers .= 'MIME-Version: 1.0'.EMAIL_NEWLINE;
 		$headers .= 'Content-type: text/html; charset=UTF-8'.EMAIL_NEWLINE;
 		$headers .= 'From: '.$settings['TITLE'].' <'.$settings['EMAIL_FROM'].'>'.EMAIL_NEWLINE;
-		admin_mail($subject, $email, $headers, FALSE, 'admin_email_vps_ip_canceled.tpl');
+		admin_mail($subject, $email, $headers, FALSE, 'admin/vps_ip_canceled.tpl');
 	}
 
 	/**
