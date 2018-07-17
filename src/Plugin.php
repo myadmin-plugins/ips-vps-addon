@@ -87,9 +87,9 @@ class Plugin {
 				$db->query('SELECT * FROM '.$settings['PREFIX'].'_masters WHERE '.$settings['PREFIX'].'_id='.$serviceInfo[$settings['PREFIX'].'_server'], __LINE__, __FILE__);
 				$db->next_record(MYSQL_ASSOC);
 				$headers = '';
-				$headers .= 'MIME-Version: 1.0'.EMAIL_NEWLINE;
-				$headers .= 'Content-type: text/html; charset=UTF-8'.EMAIL_NEWLINE;
-				$headers .= 'From: '.TITLE.' <'.EMAIL_FROM.'>'.EMAIL_NEWLINE;
+				$headers .= 'MIME-Version: 1.0'.PHP_EOL;
+				$headers .= 'Content-type: text/html; charset=UTF-8'.PHP_EOL;
+				$headers .= 'From: '.TITLE.' <'.EMAIL_FROM.'>'.PHP_EOL;
 				$subject = '0 Free IPs On '.$settings['TBLNAME'].' Server '.$db->Record[$settings['PREFIX'].'_name'];
 				admin_mail($subject, $settings['TBLNAME']." {$serviceInfo[$settings['PREFIX'].'_id']} Has Pending IPS<br>\n".$subject, $headers, FALSE, 'admin/vps_no_ips.tpl');
 			}
@@ -120,9 +120,9 @@ class Plugin {
 		$email = $settings['TBLNAME'].' ID: '.$serviceInfo[$settings['PREFIX'].'_id'].'<br>'.$settings['TBLNAME'].' Hostname: '.$serviceInfo[$settings['PREFIX'].'_hostname'].'<br>Repeat Invoice: '.$repeatInvoiceId.'<br>Description: '.self::$name.'<br>IP: '.$ip;
 		$subject = $settings['TBLNAME'].' '.$serviceInfo[$settings['PREFIX'].'_id'].' Canceled IP '.$ip;
 		$headers = '';
-		$headers .= 'MIME-Version: 1.0'.EMAIL_NEWLINE;
-		$headers .= 'Content-type: text/html; charset=UTF-8'.EMAIL_NEWLINE;
-		$headers .= 'From: '.$settings['TITLE'].' <'.$settings['EMAIL_FROM'].'>'.EMAIL_NEWLINE;
+		$headers .= 'MIME-Version: 1.0'.PHP_EOL;
+		$headers .= 'Content-type: text/html; charset=UTF-8'.PHP_EOL;
+		$headers .= 'From: '.$settings['TITLE'].' <'.$settings['EMAIL_FROM'].'>'.PHP_EOL;
 		admin_mail($subject, $email, $headers, FALSE, 'admin/vps_ip_canceled.tpl');
 	}
 
