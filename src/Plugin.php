@@ -9,8 +9,8 @@ use Symfony\Component\EventDispatcher\GenericEvent;
  *
  * @package Detain\MyAdminVpsIps
  */
-class Plugin {
-
+class Plugin
+{
 	public static $name = 'Additional IPs VPS Addon';
 	public static $description = 'Allows selling of additional IP Addresses as a VPS Addon.';
 	public static $help = '';
@@ -20,13 +20,15 @@ class Plugin {
 	/**
 	 * Plugin constructor.
 	 */
-	public function __construct() {
+	public function __construct()
+	{
 	}
 
 	/**
 	 * @return array
 	 */
-	public static function getHooks() {
+	public static function getHooks()
+	{
 		return [
 			'function.requirements' => [__CLASS__, 'getRequirements'],
 			self::$module.'.load_addons' => [__CLASS__, 'getAddon'],
@@ -37,7 +39,8 @@ class Plugin {
 	/**
 	 * @param \Symfony\Component\EventDispatcher\GenericEvent $event
 	 */
-	public static function getRequirements(GenericEvent $event) {
+	public static function getRequirements(GenericEvent $event)
+	{
 		$loader = $event->getSubject();
 		$loader->add_page_requirement('vps_ips', '/../vendor/detain/myadmin-ips-vps-addon/src/vps_ips.php');
 	}
@@ -45,7 +48,8 @@ class Plugin {
 	/**
 	 * @param \Symfony\Component\EventDispatcher\GenericEvent $event
 	 */
-	public static function getAddon(GenericEvent $event) {
+	public static function getAddon(GenericEvent $event)
+	{
 		/**
 		 * @var \ServiceHandler $service
 		 */
@@ -56,7 +60,7 @@ class Plugin {
 			->set_text('Additional IP')
 			->set_text_match('Additional IP (.*)')
 			->set_cost(VPS_IP_COST)
-			->set_require_ip(TRUE)
+			->set_require_ip(true)
 			->setEnable([__CLASS__, 'doEnable'])
 			->setDisable([__CLASS__, 'doDisable'])
 			->register();
@@ -68,14 +72,15 @@ class Plugin {
 	 * @param                $repeatInvoiceId
 	 * @param bool           $regexMatch
 	 */
-	public static function doEnable(\ServiceHandler $serviceOrder, $repeatInvoiceId, $regexMatch = FALSE) {
+	public static function doEnable(\ServiceHandler $serviceOrder, $repeatInvoiceId, $regexMatch = false)
+	{
 		$serviceInfo = $serviceOrder->getServiceInfo();
 		$settings = get_module_settings(self::$module);
 		$db = get_module_db(self::$module);
 		myadmin_log(self::$module, 'info', self::$name.' Activation', __LINE__, __FILE__);
-		if ($regexMatch === FALSE) {
+		if ($regexMatch === false) {
 			$ip = vps_get_next_ip($serviceInfo[$settings['PREFIX'].'_server']);
-			myadmin_log(self::$module, 'info', 'Trying To Give '.$settings['TITLE'].' '.$serviceInfo[$settings['PREFIX'].'_id'].' Repeat Invoice '.$repeatInvoiceId.' IP '.($ip === FALSE ? '<ip allocation failed>' : $ip), __LINE__, __FILE__);
+			myadmin_log(self::$module, 'info', 'Trying To Give '.$settings['TITLE'].' '.$serviceInfo[$settings['PREFIX'].'_id'].' Repeat Invoice '.$repeatInvoiceId.' IP '.($ip === false ? '<ip allocation failed>' : $ip), __LINE__, __FILE__);
 			if ($ip) {
 				$GLOBALS['tf']->history->add(self::$module.'queue', $serviceInfo[$settings['PREFIX'].'_id'], 'add_ip', $ip, $serviceInfo[$settings['PREFIX'].'_custid']);
 				$description = 'Additional IP '.$ip.' for '.$settings['TBLNAME'].' '.$serviceInfo[$settings['PREFIX'].'_id'];
@@ -91,7 +96,7 @@ class Plugin {
 				$headers .= 'Content-type: text/html; charset=UTF-8'.PHP_EOL;
 				$headers .= 'From: '.TITLE.' <'.EMAIL_FROM.'>'.PHP_EOL;
 				$subject = '0 Free IPs On '.$settings['TBLNAME'].' Server '.$db->Record[$settings['PREFIX'].'_name'];
-				admin_mail($subject, $settings['TBLNAME']." {$serviceInfo[$settings['PREFIX'].'_id']} Has Pending IPS<br>\n".$subject, $headers, FALSE, 'admin/vps_no_ips.tpl');
+				admin_mail($subject, $settings['TBLNAME']." {$serviceInfo[$settings['PREFIX'].'_id']} Has Pending IPS<br>\n".$subject, $headers, false, 'admin/vps_no_ips.tpl');
 			}
 		} else {
 			$ip = $regexMatch;
@@ -105,11 +110,12 @@ class Plugin {
 	 * @param                $repeatInvoiceId
 	 * @param bool           $regexMatch
 	 */
-	public static function doDisable(\ServiceHandler $serviceOrder, $repeatInvoiceId, $regexMatch = FALSE) {
+	public static function doDisable(\ServiceHandler $serviceOrder, $repeatInvoiceId, $regexMatch = false)
+	{
 		$serviceInfo = $serviceOrder->getServiceInfo();
 		$settings = get_module_settings(self::$module);
 		myadmin_log(self::$module, 'info', self::$name.' Deactivation', __LINE__, __FILE__);
-		if ($regexMatch !== FALSE) {
+		if ($regexMatch !== false) {
 			$ip = $regexMatch;
 			$GLOBALS['tf']->history->add(self::$module.'queue', $serviceInfo[$settings['PREFIX'].'_id'], 'remove_ip', $ip, $serviceInfo[$settings['PREFIX'].'_custid']);
 		} else {
@@ -123,13 +129,14 @@ class Plugin {
 		$headers .= 'MIME-Version: 1.0'.PHP_EOL;
 		$headers .= 'Content-type: text/html; charset=UTF-8'.PHP_EOL;
 		$headers .= 'From: '.$settings['TITLE'].' <'.$settings['EMAIL_FROM'].'>'.PHP_EOL;
-		admin_mail($subject, $email, $headers, FALSE, 'admin/vps_ip_canceled.tpl');
+		admin_mail($subject, $email, $headers, false, 'admin/vps_ip_canceled.tpl');
 	}
 
 	/**
 	 * @param \Symfony\Component\EventDispatcher\GenericEvent $event
 	 */
-	public static function getSettings(GenericEvent $event) {
+	public static function getSettings(GenericEvent $event)
+	{
 		$settings = $event->getSubject();
 		$settings->add_text_setting(self::$module, 'Addon Costs', 'vps_ip_cost', 'VPS Additional IP Cost:', 'This is the cost for purchasing an additional IP on top of a VPS.', $settings->get_setting('VPS_IP_COST'));
 		$settings->add_text_setting(self::$module, 'Slice Amounts', 'vps_max_ips', 'Max Addon IP Addresses:', 'Maximum amount of additional IPs you can add to your VPS', $settings->get_setting('VPS_MAX_IPS'));

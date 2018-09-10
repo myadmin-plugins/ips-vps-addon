@@ -14,7 +14,8 @@
  * @param $addon
  * @return bool
  */
-function vps_ips_check_current($addon) {
+function vps_ips_check_current($addon)
+{
 	$addon->db->query("select * from invoices left join repeat_invoices on repeat_invoices_custid=invoices_custid and repeat_invoices_service=invoices_service and repeat_invoices_id=invoices_extra where invoices_custid={$addon->serviceInfo[$addon->settings['PREFIX'].'_custid']} and invoices_type=1 and invoices_service={$addon->serviceInfo[$addon->settings['PREFIX'].'_id']} and invoices_description like '%Additional IP%' group by invoices_extra", __LINE__, __FILE__);
 	//$addon->db->query("select repeat_invoices_id, repeat_invoices_description from repeat_invoices where repeat_invoices_description like 'Additional IP%for {$addon->settings['TBLNAME']} {$addon->serviceInfo[$addon->settings['PREFIX'].'_id']}'", __LINE__, __FILE__);
 	$ips = $addon->db->num_rows();
@@ -53,7 +54,8 @@ function vps_ips_check_current($addon) {
 	return true;
 }
 
-function vps_ips() {
+function vps_ips()
+{
 	function_requirements('class.AddServiceAddon');
 	$addon = new AddServiceAddon();
 	$addon->allow_multiple = true;
