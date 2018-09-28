@@ -1,5 +1,5 @@
 {
-	"name": "detain/ips-vps-addon",
+	"name": "detain/myadmin-ips-vps-addon",
 	"type": "myadmin-plugin",
 	"description": "Ips Addon for VPS Module in MyAdmin",
 	"keywords": [
