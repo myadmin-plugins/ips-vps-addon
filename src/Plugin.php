@@ -42,7 +42,7 @@ class Plugin
 	public static function getRequirements(GenericEvent $event)
 	{
 		$loader = $event->getSubject();
-		$loader->add_page_requirement('vps_ips', '/../vendor/detain/myadmin-ips-vps-addon/src/vps_ips.php');
+		$loader->add_page_requirement('vps_ips', '/../vendor/detain/ips-vps-addon/src/vps_ips.php');
 	}
 
 	/**
