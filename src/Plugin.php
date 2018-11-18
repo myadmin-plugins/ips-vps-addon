@@ -144,7 +144,7 @@ class Plugin
          * @var \MyAdmin\Settings $settings
          **/
         $settings = $event->getSubject();
-		$settings->add_text_setting(self::$module, __('Addon Costs'), 'vps_ip_cost', __('VPS Additional IP Cost'), __('This is the cost for purchasing an additional IP on top of a VPS.'), $settings->get_setting('VPS_IP_COST'));
-		$settings->add_text_setting(self::$module, __('Slice Amounts'), 'vps_max_ips', __('Max Addon IP Addresses'), __('Maximum amount of additional IPs you can add to your VPS'), $settings->get_setting('VPS_MAX_IPS'));
+		$settings->add_text_setting(self::$module, _('Addon Costs'), 'vps_ip_cost', _('VPS Additional IP Cost'), _('This is the cost for purchasing an additional IP on top of a VPS.'), $settings->get_setting('VPS_IP_COST'));
+		$settings->add_text_setting(self::$module, _('Slice Amounts'), 'vps_max_ips', _('Max Addon IP Addresses'), _('Maximum amount of additional IPs you can add to your VPS'), $settings->get_setting('VPS_MAX_IPS'));
 	}
 }
