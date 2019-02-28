@@ -117,7 +117,7 @@ class Plugin
 	{
 		$serviceInfo = $serviceOrder->getServiceInfo();
 		$settings = get_module_settings(self::$module);
-		myadmin_log(self::$module, 'info', self::$name.' Deactivation', __LINE__, __FILE__);
+		myadmin_log(self::$module, 'info', self::$name.' Deactivation', __LINE__, __FILE__, self::$module);
 		if ($regexMatch !== false) {
 			$ip = $regexMatch;
 			$GLOBALS['tf']->history->add(self::$module.'queue', $serviceInfo[$settings['PREFIX'].'_id'], 'remove_ip', $ip, $serviceInfo[$settings['PREFIX'].'_custid']);
