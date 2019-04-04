@@ -41,10 +41,10 @@ class Plugin
 	 */
 	public static function getRequirements(GenericEvent $event)
 	{
-        /**
-         * @var \MyAdmin\Plugins\Loader $this->loader
-         */
-        $loader = $event->getSubject();
+		/**
+		 * @var \MyAdmin\Plugins\Loader $this->loader
+		 */
+		$loader = $event->getSubject();
 		$loader->add_page_requirement('vps_ips', '/../vendor/detain/myadmin-ips-vps-addon/src/vps_ips.php');
 	}
 
@@ -138,12 +138,12 @@ class Plugin
 	/**
 	 * @param \Symfony\Component\EventDispatcher\GenericEvent $event
 	 */
-    public static function getSettings(GenericEvent $event)
-    {
-        /**
-         * @var \MyAdmin\Settings $settings
-         **/
-        $settings = $event->getSubject();
+	public static function getSettings(GenericEvent $event)
+	{
+		/**
+		 * @var \MyAdmin\Settings $settings
+		 **/
+		$settings = $event->getSubject();
 		$settings->add_text_setting(self::$module, _('Addon Costs'), 'vps_ip_cost', _('VPS Additional IP Cost'), _('This is the cost for purchasing an additional IP on top of a VPS.'), $settings->get_setting('VPS_IP_COST'));
 		$settings->add_text_setting(self::$module, _('Slice Amounts'), 'vps_max_ips', _('Max Addon IP Addresses'), _('Maximum amount of additional IPs you can add to your VPS'), $settings->get_setting('VPS_MAX_IPS'));
 	}
