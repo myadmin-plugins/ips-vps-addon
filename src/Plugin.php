@@ -80,7 +80,7 @@ class Plugin
 		$serviceInfo = $serviceOrder->getServiceInfo();
 		$settings = get_module_settings(self::$module);
 		$db = get_module_db(self::$module);
-		myadmin_log(self::$module, 'info', self::$name.' Activation', __LINE__, __FILE__, self::$module, $serviceInfo[$settings['PREFIX'].'_id']);
+		myadmin_log(self::$module, 'info', self::$name.' Activation RegexMatch:'.var_export($regexMatch,true), __LINE__, __FILE__, self::$module, $serviceInfo[$settings['PREFIX'].'_id']);
 		if ($regexMatch === false) {
 			$ip = vps_get_next_ip($serviceInfo[$settings['PREFIX'].'_server']);
 			myadmin_log(self::$module, 'info', 'Trying To Give '.$settings['TITLE'].' '.$serviceInfo[$settings['PREFIX'].'_id'].' Repeat Invoice '.$repeatInvoiceId.' IP '.($ip === false ? '<ip allocation failed>' : $ip), __LINE__, __FILE__, self::$module, $serviceInfo[$settings['PREFIX'].'_id']);
