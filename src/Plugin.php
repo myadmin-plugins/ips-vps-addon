@@ -90,7 +90,11 @@ class Plugin
 				$rdescription = '(Repeat Invoice: '.$repeatInvoiceId.') '.$description;
 				$db->query("update {$settings['PREFIX']}_ips set ips_main=0,ips_used=1,ips_{$settings['PREFIX']}={$serviceInfo[$settings['PREFIX'].'_id']} where ips_ip='{$ip}'", __LINE__, __FILE__);
 				$db->query("update invoices set invoices_description='{$rdescription}' where invoices_type=1 and invoices_extra='{$repeatInvoiceId}'", __LINE__, __FILE__);
-				$db->query("update repeat_invoices set repeat_invoices_description='{$description}' where repeat_invoices_id='{$repeatInvoiceId}'", __LINE__, __FILE__);
+				$repeatInvoiceObj = new \MyAdmin\Orm\Repeat_Invoice();
+				$repeatInvoiceObj->load_real($repeatInvoiceId);
+				if ($repeatInvoiceObj->loaded === true) {
+					$repeatInvoiceObj->setDescription($description)->save();
+				}
 			} else {
 				$db->query('SELECT * FROM '.$settings['PREFIX'].'_masters WHERE '.$settings['PREFIX'].'_id='.$serviceInfo[$settings['PREFIX'].'_server'], __LINE__, __FILE__);
 				$db->next_record(MYSQL_ASSOC);
