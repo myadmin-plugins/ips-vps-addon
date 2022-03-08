@@ -23,10 +23,10 @@ function vps_ips_check_current($addon)
 		while ($addon->db->next_record(MYSQL_ASSOC)) {
 			$pre = "
 			<div class='form-group'>
-				<label class='col-sm-7 control-label'>Additional IP:</label>
-				<div class='col-sm-5 control-label' style='text-align: left;'>";
+				<label class='col-sm-7 col-form-label'>Additional IP:</label>
+				<div class='col-sm-5 col-form-label' style='text-align: left;'>";
 			$link_disable = $GLOBALS['tf']->link('index.php', str_replace(['{$module}', '{$rid}'], [$addon->module, $addon->db->Record['invoices_extra']], $addon->disable_link));
-			$post = "<a href='{$link_disable}' title='Cancel Additional IP' class='btn btn-xs btn-default' style='padding: 1px; margin-bottom: 3px;'><i class='glyphicon glyphicon-remove'></i></a>".
+			$post = "<a href='{$link_disable}' title='Cancel Additional IP' class='btn btn-sm btn-secondary' style='padding: 1px; margin-bottom: 3px;'><i class='glyphicon glyphicon-remove'></i></a>".
 				'
 				</div>
 			</div>';
