@@ -107,7 +107,7 @@ class Plugin
                 $db->next_record(MYSQL_ASSOC);
                 $subject = '0 free IPs on '.$settings['TBLNAME'].' server '.$db->Record[$settings['PREFIX'].'_name'].' while trying to activate '.$settings['TBLNAME'].' '.$serviceInfo[$settings['PREFIX'].'_id'];
                 (new \MyAdmin\Mail())->adminMail($subject, $settings['TBLNAME']." {$serviceInfo[$settings['PREFIX'].'_id']} Has Pending IPS<br>\n".$subject, false, 'admin/vps_no_ips.tpl');
-                $GLOBALS['tf']->history->add($settings['TABLE'], $serviceInfo[$settings['PREFIX'].'_id'], 'allocate_ip_failed', '', $custid);
+                $GLOBALS['tf']->history->add($settings['TABLE'], $serviceInfo[$settings['PREFIX'].'_id'], 'allocate_ip_failed', '', $serviceInfo[$settings['PREFIX'].'_custid']);
                 getcurlpage('https://chat.is.cc/hooks/ro4f5sWCqztHjKnXE/CzqWnxdhQM4GswYFvJzCTXwDvN8NasseH8jJxtfDF38Hggx9', json_encode([
                     'username' => 'Interesting Guy',
                     'text' => $subject,
