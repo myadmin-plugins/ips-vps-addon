@@ -88,7 +88,7 @@ class Plugin
                 $GLOBALS['tf']->history->add(self::$module.'queue', $serviceInfo[$settings['PREFIX'].'_id'], 'add_ip', $ip, $serviceInfo[$settings['PREFIX'].'_custid']);
                 $description = 'Additional IP '.$ip.' for '.$settings['TBLNAME'].' '.$serviceInfo[$settings['PREFIX'].'_id'];
                 $rdescription = '(Repeat Invoice: '.$repeatInvoiceId.') '.$description;
-                $db->query("update {$settings['PREFIX']}_ips set ips_main=0,ips_used=1,ips_{$settings['PREFIX']}={$serviceInfo[$settings['PREFIX'].'_id']} where ips_ip='{$ip}'", __LINE__, __FILE__, true);
+                $db->query("update {$settings['PREFIX']}_ips set ips_main=0,ips_used=1,ips_{$settings['PREFIX']}={$serviceInfo[$settings['PREFIX'].'_id']} where ips_ip='{$ip}'", __LINE__, __FILE__);
                 $invoiceObj = new \MyAdmin\Orm\Invoice();
                 $invoices = $invoiceObj->find([['type','=',1],['extra','=',$repeatInvoiceId]]);
                 foreach ($invoices as $invoiceId) {
@@ -116,7 +116,7 @@ class Plugin
         } else {
             $ip = $regexMatch;
             $GLOBALS['tf']->history->add(self::$module.'queue', $serviceInfo[$settings['PREFIX'].'_id'], 'ensure_addon_ip', $ip, $serviceInfo[$settings['PREFIX'].'_custid']);
-            $db->query("update {$settings['PREFIX']}_ips set ips_main=0,ips_used=1,ips_{$settings['PREFIX']}={$serviceInfo[$settings['PREFIX'].'_id']} where ips_ip='{$ip}'", __LINE__, __FILE__, true);
+            $db->query("update {$settings['PREFIX']}_ips set ips_main=0,ips_used=1,ips_{$settings['PREFIX']}={$serviceInfo[$settings['PREFIX'].'_id']} where ips_ip='{$ip}'", __LINE__, __FILE__);
         }
     }
 
