@@ -78,17 +78,34 @@ class Plugin
     public static function doEnable(\ServiceHandler $serviceOrder, $repeatInvoiceId, $regexMatch = false)
     {
         $serviceInfo = $serviceOrder->getServiceInfo();
+        $id = $serviceInfo[$settings['PREFIX'].'_id'];
         $settings = get_module_settings(self::$module);
         $db = get_module_db(self::$module);
-        myadmin_log(self::$module, 'info', self::$name.' Activation RegexMatch:'.var_export($regexMatch, true), __LINE__, __FILE__, self::$module, $serviceInfo[$settings['PREFIX'].'_id']);
-        if ($regexMatch === false) {
+        myadmin_log(self::$module, 'info', self::$name.' Activation RegexMatch:'.var_export($regexMatch, true), __LINE__, __FILE__, self::$module, $id);
+        $needsIp = true;
+        if ($regexMatch !== false) {
+            $ip = $regexMatch;
+            if (validIp($ip)) {
+                $db2->query("select * from {$settings['PREFIX']}_ips where ips_ip='{$ip}' and ips_{$settings['PREFIX']} > 0 and ips_{$settings['PREFIX']} != {$id}", __LINE__, __FILE__);
+                if ($db2->num_rows() == 0) {
+                    $db2->query("select * from {$settings['TABLE']} where {$settings['PREFIX']}_ip='{$ip}' and {$settings['PREFIX']}_status='active' and {$settings['PREFIX']}_id != '{$id}'", __LINE__, __FILE__);
+                    if ($db2->num_rows() == 0) {
+                        $needsIp = false;
+                        $GLOBALS['tf']->history->add(self::$module.'queue', $id, 'ensure_addon_ip', $ip, $serviceInfo[$settings['PREFIX'].'_custid']);
+                        $db->query("update {$settings['PREFIX']}_ips set ips_main=0,ips_used=1,ips_{$settings['PREFIX']}={$id} where ips_ip='{$ip}'", __LINE__, __FILE__);
+                    }
+                }
+                $db2->free();
+            }
+        }
+        if ($needsIp === true) {
             $ip = vps_get_next_ip($serviceInfo[$settings['PREFIX'].'_server']);
-            myadmin_log(self::$module, 'info', 'Trying To Give '.$settings['TITLE'].' '.$serviceInfo[$settings['PREFIX'].'_id'].' Repeat Invoice '.$repeatInvoiceId.' IP '.($ip === false ? '<ip allocation failed>' : $ip), __LINE__, __FILE__, self::$module, $serviceInfo[$settings['PREFIX'].'_id']);
+            myadmin_log(self::$module, 'info', 'Trying To Give '.$settings['TITLE'].' '.$id.' Repeat Invoice '.$repeatInvoiceId.' IP '.($ip === false ? '<ip allocation failed>' : $ip), __LINE__, __FILE__, self::$module, $id);
             if ($ip) {
-                $GLOBALS['tf']->history->add(self::$module.'queue', $serviceInfo[$settings['PREFIX'].'_id'], 'add_ip', $ip, $serviceInfo[$settings['PREFIX'].'_custid']);
-                $description = 'Additional IP '.$ip.' for '.$settings['TBLNAME'].' '.$serviceInfo[$settings['PREFIX'].'_id'];
+                $GLOBALS['tf']->history->add(self::$module.'queue', $id, 'add_ip', $ip, $serviceInfo[$settings['PREFIX'].'_custid']);
+                $description = 'Additional IP '.$ip.' for '.$settings['TBLNAME'].' '.$id;
                 $rdescription = '(Repeat Invoice: '.$repeatInvoiceId.') '.$description;
-                $db->query("update {$settings['PREFIX']}_ips set ips_main=0,ips_used=1,ips_{$settings['PREFIX']}={$serviceInfo[$settings['PREFIX'].'_id']} where ips_ip='{$ip}'", __LINE__, __FILE__);
+                $db->query("update {$settings['PREFIX']}_ips set ips_main=0,ips_used=1,ips_{$settings['PREFIX']}={$id} where ips_ip='{$ip}'", __LINE__, __FILE__);
                 $invoiceObj = new \MyAdmin\Orm\Invoice();
                 $invoices = $invoiceObj->find([['type','=',1],['extra','=',$repeatInvoiceId]]);
                 foreach ($invoices as $invoiceId) {
@@ -105,15 +122,11 @@ class Plugin
             } else {
                 $db->query('SELECT * FROM '.$settings['PREFIX'].'_masters WHERE '.$settings['PREFIX'].'_id='.$serviceInfo[$settings['PREFIX'].'_server'], __LINE__, __FILE__);
                 $db->next_record(MYSQL_ASSOC);
-                $subject = '0 free IPs on '.$settings['TBLNAME'].' server '.$db->Record[$settings['PREFIX'].'_name'].' while trying to activate '.$settings['TBLNAME'].' '.$serviceInfo[$settings['PREFIX'].'_id'];
-                (new \MyAdmin\Mail())->adminMail($subject, $settings['TBLNAME']." {$serviceInfo[$settings['PREFIX'].'_id']} Has Pending IPS<br>\n".$subject, false, 'admin/vps_no_ips.tpl');
-                $GLOBALS['tf']->history->add($settings['TABLE'], $serviceInfo[$settings['PREFIX'].'_id'], 'allocate_ip_failed', '', $serviceInfo[$settings['PREFIX'].'_custid']);
+                $subject = '0 free IPs on '.$settings['TBLNAME'].' server '.$db->Record[$settings['PREFIX'].'_name'].' while trying to activate '.$settings['TBLNAME'].' '.$id;
+                (new \MyAdmin\Mail())->adminMail($subject, $settings['TBLNAME']." {$id} Has Pending IPS<br>\n".$subject, false, 'admin/vps_no_ips.tpl');
+                $GLOBALS['tf']->history->add($settings['TABLE'], $id, 'allocate_ip_failed', '', $serviceInfo[$settings['PREFIX'].'_custid']);
                 chatNotify($subject, 'int-dev');
             }
-        } else {
-            $ip = $regexMatch;
-            $GLOBALS['tf']->history->add(self::$module.'queue', $serviceInfo[$settings['PREFIX'].'_id'], 'ensure_addon_ip', $ip, $serviceInfo[$settings['PREFIX'].'_custid']);
-            $db->query("update {$settings['PREFIX']}_ips set ips_main=0,ips_used=1,ips_{$settings['PREFIX']}={$serviceInfo[$settings['PREFIX'].'_id']} where ips_ip='{$ip}'", __LINE__, __FILE__);
         }
     }
 
