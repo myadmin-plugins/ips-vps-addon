@@ -93,7 +93,11 @@ class Plugin
                         $needsIp = false;
                         $GLOBALS['tf']->history->add(self::$module.'queue', $id, 'ensure_addon_ip', $ip, $serviceInfo[$settings['PREFIX'].'_custid']);
                         $db->query("update {$settings['PREFIX']}_ips set ips_main=0,ips_used=1,ips_{$settings['PREFIX']}={$id} where ips_ip='{$ip}'", __LINE__, __FILE__);
+                    } else {
+                        // send remove ip request to remove it from this id
                     }
+                } else {
+                    // send remove ip request to remove it from this id
                 }
                 $db2->free();
             }
