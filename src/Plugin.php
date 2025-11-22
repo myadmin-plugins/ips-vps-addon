@@ -78,9 +78,10 @@ class Plugin
     public static function doEnable(\ServiceHandler $serviceOrder, $repeatInvoiceId, $regexMatch = false)
     {
         $serviceInfo = $serviceOrder->getServiceInfo();
-        $id = $serviceInfo[$settings['PREFIX'].'_id'];
         $settings = get_module_settings(self::$module);
+        $id = $serviceInfo[$settings['PREFIX'].'_id'];
         $db = get_module_db(self::$module);
+        $db2 = get_module_db(self::$module);
         myadmin_log(self::$module, 'info', self::$name.' Activation RegexMatch:'.var_export($regexMatch, true), __LINE__, __FILE__, self::$module, $id);
         $needsIp = true;
         if ($regexMatch !== false) {
