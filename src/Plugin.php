@@ -92,7 +92,7 @@ class Plugin
                     $db2->query("select * from {$settings['TABLE']} where {$settings['PREFIX']}_ip='{$ip}' and {$settings['PREFIX']}_status='active' and {$settings['PREFIX']}_id != '{$id}'", __LINE__, __FILE__);
                     if ($db2->num_rows() == 0) {
                         $needsIp = false;
-                        $GLOBALS['tf']->history->add(self::$module.'queue', $id, 'ensure_addon_ip', $ip, $serviceInfo[$settings['PREFIX'].'_custid']);
+                        \MyAdmin\App::history()->add(self::$module.'queue', $id, 'ensure_addon_ip', $ip, $serviceInfo[$settings['PREFIX'].'_custid']);
                         $db->query("update {$settings['PREFIX']}_ips set ips_main=0,ips_used=1,ips_{$settings['PREFIX']}={$id} where ips_ip='{$ip}'", __LINE__, __FILE__);
                     } else {
                         // send remove ip request to remove it from this id
@@ -107,7 +107,7 @@ class Plugin
             $ip = vps_get_next_ip($serviceInfo[$settings['PREFIX'].'_server']);
             myadmin_log(self::$module, 'info', 'Trying To Give '.$settings['TITLE'].' '.$id.' Repeat Invoice '.$repeatInvoiceId.' IP '.($ip === false ? '<ip allocation failed>' : $ip), __LINE__, __FILE__, self::$module, $id);
             if ($ip) {
-                $GLOBALS['tf']->history->add(self::$module.'queue', $id, 'add_ip', $ip, $serviceInfo[$settings['PREFIX'].'_custid']);
+                \MyAdmin\App::history()->add(self::$module.'queue', $id, 'add_ip', $ip, $serviceInfo[$settings['PREFIX'].'_custid']);
                 $description = 'Additional IP '.$ip.' for '.$settings['TBLNAME'].' '.$id;
                 $rdescription = '(Repeat Invoice: '.$repeatInvoiceId.') '.$description;
                 $db->query("update {$settings['PREFIX']}_ips set ips_main=0,ips_used=1,ips_{$settings['PREFIX']}={$id} where ips_ip='{$ip}'", __LINE__, __FILE__);
@@ -129,7 +129,7 @@ class Plugin
                 $db->next_record(MYSQL_ASSOC);
                 $subject = '0 free IPs on '.$settings['TBLNAME'].' server '.$db->Record[$settings['PREFIX'].'_name'].' while trying to activate '.$settings['TBLNAME'].' '.$id;
                 (new \MyAdmin\Mail())->adminMail($subject, $settings['TBLNAME']." {$id} Has Pending IPS<br>\n".$subject, false, 'admin/vps_no_ips.tpl');
-                $GLOBALS['tf']->history->add($settings['TABLE'], $id, 'allocate_ip_failed', '', $serviceInfo[$settings['PREFIX'].'_custid']);
+                \MyAdmin\App::history()->add($settings['TABLE'], $id, 'allocate_ip_failed', '', $serviceInfo[$settings['PREFIX'].'_custid']);
                 chatNotify($subject, 'int-dev');
             }
         }
@@ -147,7 +147,7 @@ class Plugin
         myadmin_log(self::$module, 'info', self::$name.' Deactivation', __LINE__, __FILE__, self::$module, $serviceInfo[$settings['PREFIX'].'_id']);
         if ($regexMatch !== false) {
             $ip = $regexMatch;
-            $GLOBALS['tf']->history->add(self::$module.'queue', $serviceInfo[$settings['PREFIX'].'_id'], 'remove_ip', $ip, $serviceInfo[$settings['PREFIX'].'_custid']);
+            \MyAdmin\App::history()->add(self::$module.'queue', $serviceInfo[$settings['PREFIX'].'_id'], 'remove_ip', $ip, $serviceInfo[$settings['PREFIX'].'_custid']);
         } else {
             $ip = 'None Assigned Yet';
         }

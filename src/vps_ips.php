@@ -25,7 +25,7 @@ function vps_ips_check_current($addon)
 			<div class='form-group'>
 				<label class='col-sm-7 col-form-label'>Additional IP:</label>
 				<div class='col-sm-5 col-form-label' style='text-align: left;'>";
-            $link_disable = $GLOBALS['tf']->link('index.php', str_replace(['{$module}', '{$rid}'], [$addon->module, $addon->db->Record['invoices_extra']], $addon->disable_link));
+            $link_disable = \MyAdmin\App::link('index.php', str_replace(['{$module}', '{$rid}'], [$addon->module, $addon->db->Record['invoices_extra']], $addon->disable_link));
             $post = "<a href='{$link_disable}' title='Cancel Additional IP' class='btn btn-sm btn-secondary' style='padding: 1px; margin-bottom: 3px;'><i class='glyphicon glyphicon-remove'></i></a>".
                 '
 				</div>
@@ -44,7 +44,7 @@ function vps_ips_check_current($addon)
         $addon->alert('<i class="fa fa-warning"></i> No available free ips on this server. Please contact support to order additional ips..');
         return false;
     } elseif ($ips >= VPS_MAX_IPS) {
-        if ($GLOBALS['tf']->ima == 'admin') {
+        if (\MyAdmin\App::ima() == 'admin') {
             $addon->alert('<i class="fa fa-warning"></i> VPS already has the maximum number of IPs normally allowed, but allowing this because user is admin.');
         } else {
             $addon->alert('<i class="fa fa-warning"></i> VPS already has the maximum number of IPs allowed.  If you require additional IPs please contact support.');
