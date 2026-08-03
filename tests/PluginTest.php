@@ -3,8 +3,11 @@
 namespace Detain\MyAdminVpsIps\Tests;
 
 use Detain\MyAdminVpsIps\Plugin;
+use Detain\MyAdminVpsIps\Tests\Support\FrameworkSpy;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
+use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\EventDispatcher\GenericEvent;
 
 /**
  * Tests for the Plugin class.
@@ -359,13 +362,138 @@ class PluginTest extends TestCase
         $this->assertCount(5, $properties);
     }
 
+    // ---------------------------------------------------------------
+    //  Hook dispatch tests
+    //
+    //  These replace an assertion that the class has exactly 6 methods. A method
+    //  count carries no behavioural meaning and broke as soon as a method was
+    //  legitimately added (there are now 7). What matters is that the callbacks the
+    //  plugin hands the framework are really there and really work, so each hook is
+    //  now dispatched through a real dispatcher and asserted on by its effect.
+    // ---------------------------------------------------------------
+
     /**
-     * Tests that the Plugin class has exactly 6 methods.
+     * Register every advertised hook on a real dispatcher, the way MyAdmin does.
      */
-    public function testClassHasExpectedNumberOfMethods(): void
+    private function dispatcherWithPluginHooks(): EventDispatcher
     {
-        $methods = $this->reflection->getMethods();
-        $this->assertCount(6, $methods);
+        $dispatcher = new EventDispatcher();
+        $hooks = Plugin::getHooks();
+        $this->assertNotEmpty($hooks, 'The plugin must advertise at least one hook');
+        foreach ($hooks as $hookName => $callback) {
+            $this->assertIsCallable($callback, "Hook '{$hookName}' is registered but is not callable");
+            $dispatcher->addListener($hookName, $callback);
+        }
+        return $dispatcher;
+    }
+
+    /**
+     * Dispatching vps.load_addons builds the additional-IP addon and hands it to the
+     * service, wired to enable/disable callbacks that really are invocable. This is
+     * the part that matters: MyAdmin calls those two callbacks later, from a
+     * different request, so a typo in either name is invisible until an order is paid.
+     */
+    public function testLoadAddonsHookRegistersAddonWithInvocableCallbacks(): void
+    {
+        FrameworkSpy::reset();
+        $service = new class () {
+            /** @var array<int, \AddonHandler> */
+            public $addons = [];
+
+            public function addAddon($addon)
+            {
+                $this->addons[] = $addon;
+            }
+        };
+
+        $this->dispatcherWithPluginHooks()->dispatch(new GenericEvent($service), 'vps.load_addons');
+
+        $this->assertCount(1, $service->addons, 'The addon must be handed to the service');
+        $addon = $service->addons[0];
+        $this->assertTrue($addon->registered, 'The addon must be registered');
+        $this->assertSame('vps', $addon->config['module']);
+        $this->assertSame('Additional IP', $addon->config['text']);
+        $this->assertSame('Additional IP (.*)', $addon->config['text_match']);
+        $this->assertSame(VPS_IP_COST, $addon->config['cost']);
+        $this->assertTrue($addon->config['require_ip'], 'An additional IP order has to allocate an IP');
+        $this->assertContains('class.AddonHandler', FrameworkSpy::$requirements);
+
+        foreach (['enable', 'disable'] as $lifecycle) {
+            $callback = $addon->config[$lifecycle];
+            $this->assertIsCallable($callback, "The addon's {$lifecycle} callback is not callable");
+            $this->assertSame(Plugin::class, $callback[0]);
+            $this->assertTrue(
+                $this->reflection->getMethod($callback[1])->isStatic(),
+                "{$callback[1]} is used as a static callback so it must be static"
+            );
+        }
+        $this->assertNotSame($addon->config['enable'], $addon->config['disable']);
+    }
+
+    /**
+     * Dispatching function.requirements registers the vps_ips page against a file
+     * this package actually ships. A stale path here is a fatal at page load.
+     */
+    public function testRequirementsHookRegistersAPageFileThatShips(): void
+    {
+        $loader = new class () {
+            /** @var array<string, string> */
+            public $pages = [];
+
+            public function add_page_requirement($name, $path)
+            {
+                $this->pages[$name] = $path;
+            }
+        };
+
+        $this->dispatcherWithPluginHooks()->dispatch(new GenericEvent($loader), 'function.requirements');
+
+        $this->assertArrayHasKey('vps_ips', $loader->pages);
+        $path = $loader->pages['vps_ips'];
+        $packageName = basename(dirname(__DIR__));
+        $this->assertStringContainsString('/' . $packageName . '/', $path, 'The path must point into this package');
+        $relative = substr($path, strpos($path, '/' . $packageName . '/') + strlen($packageName) + 2);
+        $this->assertFileExists(dirname(__DIR__) . '/' . $relative);
+    }
+
+    /**
+     * Dispatching vps.settings registers the addon's cost and per-VPS IP limit as
+     * module settings, and hands the settings object back on the 'global' target -
+     * leaving it on 'module' would misfile every setting registered afterwards.
+     */
+    public function testSettingsHookRegistersCostAndLimitSettings(): void
+    {
+        $settings = new class () {
+            /** @var array<int, string> */
+            public $targets = [];
+
+            /** @var array<string, array<int, mixed>> */
+            public $registered = [];
+
+            public function setTarget($target)
+            {
+                $this->targets[] = $target;
+            }
+
+            public function get_setting($name)
+            {
+                return 'current:' . $name;
+            }
+
+            public function add_text_setting(...$args)
+            {
+                $this->registered[$args[2]] = $args;
+            }
+        };
+
+        $this->dispatcherWithPluginHooks()->dispatch(new GenericEvent($settings), 'vps.settings');
+
+        $this->assertArrayHasKey('vps_ip_cost', $settings->registered);
+        $this->assertArrayHasKey('vps_max_ips', $settings->registered);
+        $this->assertSame('vps', $settings->registered['vps_ip_cost'][0]);
+        $this->assertSame('current:VPS_IP_COST', $settings->registered['vps_ip_cost'][5]);
+        $this->assertSame('current:VPS_MAX_IPS', $settings->registered['vps_max_ips'][5]);
+        $this->assertSame(['module', 'global'], $settings->targets);
     }
 
     /**
