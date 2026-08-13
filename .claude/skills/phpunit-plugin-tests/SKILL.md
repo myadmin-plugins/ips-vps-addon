@@ -1,6 +1,6 @@
 ---
 name: phpunit-plugin-tests
-description: Writes PHPUnit 9 tests under tests/ in namespace Detain\MyAdminVpsIps\Tests\. Use when user says 'add test', 'write test', 'test coverage', or adds methods to src/Plugin.php or src/vps_ips.php. Covers ReflectionClass-based static property/method signature tests (PluginTest pattern) and file-content string-assertion tests (VpsIpsFunctionsTest pattern). Do NOT use for integration tests requiring a live MyAdmin instance or database. NOTE: for a plugin's contract/behavioral tests (tests/ContractTest.php, the shared harness, composer myadmin:scaffold-tests) use the plugin-contract-tests skill instead — this skill's reflection-only guidance predates that harness.
+description: Writes PHPUnit 9 tests under tests/ in namespace Detain\MyAdminVpsIps\Tests\. Use when user says 'add test', 'write test', 'test coverage', or adds methods to src/Plugin.php or src/vps_ips.php. Covers ReflectionClass-based static property/method signature tests (PluginTest pattern) and file-content string-assertion tests (VpsIpsFunctionsTest pattern). Do NOT use for integration tests requiring a live MyAdmin instance or database. For a plugin's contract or behavioral tests (tests/ContractTest.php, the shared harness, composer myadmin:scaffold-tests) use the plugin-contract-tests skill instead — this skill's reflection-only guidance predates that harness.
 ---
 <!-- myadmin-contract-harness-notice -->
 > ### ⚠️ Read this before the rest of the file
