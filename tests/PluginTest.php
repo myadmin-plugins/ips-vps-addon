@@ -450,7 +450,17 @@ class PluginTest extends TestCase
 
         $this->assertArrayHasKey('vps_ips', $loader->pages);
         $path = $loader->pages['vps_ips'];
-        $packageName = basename(dirname(__DIR__));
+
+        // The expected fragment comes from composer.json, NOT from basename(dirname(__DIR__)).
+        //
+        // The directory a checkout happens to live in is not a property of the package. Inside
+        // a MyAdmin tree Composer installs this as vendor/detain/myadmin-ips-vps-addon, so the
+        // directory matched; a plain `git clone` of the repo produces `ips-vps-addon`, and the
+        // assertion then failed on a path that was entirely correct. That is a test asserting
+        // where it was checked out.
+        $manifest = json_decode((string) file_get_contents(dirname(__DIR__) . '/composer.json'), true);
+        $packageName = substr($manifest['name'], strpos($manifest['name'], '/') + 1);
+
         $this->assertStringContainsString('/' . $packageName . '/', $path, 'The path must point into this package');
         $relative = substr($path, strpos($path, '/' . $packageName . '/') + strlen($packageName) + 2);
         $this->assertFileExists(dirname(__DIR__) . '/' . $relative);
