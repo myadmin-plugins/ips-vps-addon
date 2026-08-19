@@ -39,8 +39,14 @@ function vps_ips_check_current($addon)
             }
         }
     }
-    $nextip = vps_get_next_ip($addon->serviceInfo[$addon->settings['PREFIX'].'_server']);
-    if ($nextip === false) {
+    // Availability check only. This runs on the build_summary_header render hook,
+    // and the ip it used to ask for was never consumed - only compared against
+    // false. vps_get_next_ip() rewrites addon invoice descriptions as a side
+    // effect, so asking it an availability question meant a page render paid for
+    // an unindexed sweep of the invoices table. The real allocation happens in
+    // Plugin::doEnable() once the addon is paid for.
+    $freeIps = vps_get_free_ips($addon->serviceInfo[$addon->settings['PREFIX'].'_server']);
+    if (sizeof($freeIps) === 0) {
         $addon->alert('<i class="fa fa-warning"></i> No available free ips on this server. Please contact support to order additional ips..');
         return false;
     } elseif ($ips >= VPS_MAX_IPS) {

@@ -237,7 +237,7 @@ class VpsIpsFunctionsTest extends TestCase
     }
 
     /**
-     * Below the limit the order proceeds with no warnings at all, and the free IP is
+     * Below the limit the order proceeds with no warnings at all, and free IPs are
      * looked up on the server the VPS actually lives on.
      */
     public function testCheckCurrentAllowsOrderBelowTheIpLimit(): void
@@ -248,7 +248,21 @@ class VpsIpsFunctionsTest extends TestCase
 
         $this->assertTrue(vps_ips_check_current($addon));
         $this->assertSame([], $addon->alerts);
-        $this->assertSame([12], FrameworkSpy::$nextIpLookups);
+        $this->assertSame([12], FrameworkSpy::$freeIpLookups);
+    }
+
+    /**
+     * The availability check must stay side-effect free. It renders a summary header,
+     * so it asks which IPs are free rather than claiming one through
+     * vps_get_next_ip(), which rewrites addon invoice descriptions as it goes.
+     */
+    public function testCheckCurrentDoesNotAllocateAnIpToTestAvailability(): void
+    {
+        FrameworkSpy::reset();
+        $addon = $this->addon($this->invoiceRows(VPS_MAX_IPS - 1));
+
+        $this->assertTrue(vps_ips_check_current($addon));
+        $this->assertSame([], FrameworkSpy::$nextIpLookups);
     }
 
     /**
@@ -260,7 +274,7 @@ class VpsIpsFunctionsTest extends TestCase
         foreach (['client', 'admin'] as $role) {
             FrameworkSpy::reset();
             FrameworkSpy::$ima = $role;
-            FrameworkSpy::$nextIp = false;
+            FrameworkSpy::$freeIps = [];
             $addon = $this->addon([]);
 
             $this->assertFalse(vps_ips_check_current($addon), "{$role} must be refused when the server is full");

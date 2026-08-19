@@ -102,6 +102,18 @@ namespace {
         }
     }
 
+    if (!function_exists('vps_get_free_ips')) {
+        /**
+         * @param  mixed $server
+         * @return array<int, string> every free IP on the server, empty when full
+         */
+        function vps_get_free_ips($server)
+        {
+            FrameworkSpy::$freeIpLookups[] = $server;
+            return FrameworkSpy::$freeIps;
+        }
+    }
+
     if (!function_exists('validIp')) {
         /**
          * @param  string $ip

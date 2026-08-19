@@ -49,6 +49,21 @@ final class FrameworkSpy
     public static $nextIp = '192.0.2.7';
 
     /**
+     * Server ids passed to vps_get_free_ips().
+     *
+     * @var array<int, mixed>
+     */
+    public static $freeIpLookups = [];
+
+    /**
+     * What vps_get_free_ips() hands back: the free IPs on the server, empty when
+     * there are none left to give out.
+     *
+     * @var array<int, string>
+     */
+    public static $freeIps = ['192.0.2.7'];
+
+    /**
      * The role of the logged-in user, as \MyAdmin\App::ima() reports it.
      *
      * @var string
@@ -65,6 +80,8 @@ final class FrameworkSpy
         self::$requirements = [];
         self::$nextIpLookups = [];
         self::$nextIp = '192.0.2.7';
+        self::$freeIpLookups = [];
+        self::$freeIps = ['192.0.2.7'];
         self::$ima = 'client';
     }
 
