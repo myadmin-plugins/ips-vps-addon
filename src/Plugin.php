@@ -104,13 +104,12 @@ class Plugin
             }
         }
         if ($needsIp === true) {
-            $ip = vps_get_next_ip($serviceInfo[$settings['PREFIX'].'_server']);
+            $ip = vps_allocate_ip($serviceInfo[$settings['PREFIX'].'_server'], $id, 0, self::$module);
             myadmin_log(self::$module, 'info', 'Trying To Give '.$settings['TITLE'].' '.$id.' Repeat Invoice '.$repeatInvoiceId.' IP '.($ip === false ? '<ip allocation failed>' : $ip), __LINE__, __FILE__, self::$module, $id);
             if ($ip) {
                 \MyAdmin\App::history()->add(self::$module.'queue', $id, 'add_ip', $ip, $serviceInfo[$settings['PREFIX'].'_custid']);
                 $description = 'Additional IP '.$ip.' for '.$settings['TBLNAME'].' '.$id;
                 $rdescription = '(Repeat Invoice: '.$repeatInvoiceId.') '.$description;
-                $db->query("update {$settings['PREFIX']}_ips set ips_main=0,ips_used=1,ips_{$settings['PREFIX']}={$id} where ips_ip='{$ip}'", __LINE__, __FILE__);
                 $invoiceObj = new \MyAdmin\Orm\Invoice();
                 $invoices = $invoiceObj->find([['type','=',1],['extra','=',$repeatInvoiceId]]);
                 foreach ($invoices as $invoiceId) {
